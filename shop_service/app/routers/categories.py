@@ -1,5 +1,4 @@
 from typing import Annotated
-from starlette import status
 from fastapi import APIRouter, Depends, Request, HTTPException
 from app.database import SessionLocal
 from sqlalchemy.orm import Session
@@ -61,3 +60,17 @@ def delete_category(db: db_dependency, category_id: int):
     db.commit()
 
     return {"message": "Category deleted"}
+
+
+@router.put("/{category_id}/change_parent/{new_parent_id}")
+def change_category_parent(db: db_dependency, category_id: int, new_parent_id: int):
+    category = db.query(models.Category).filter(models.Category.id == category_id).first()
+    new_parent = db.query(models.Category).filter(models.Category.id == new_parent_id).first()
+
+    if category and new_parent:
+        category.parent = new_parent
+        db.commit()
+        db.refresh(category)
+        return category
+
+    raise HTTPException(status_code=404, detail="Category or new parent not found")
