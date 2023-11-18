@@ -1,0 +1,11 @@
+*.pyc
+*.iml
+*.xml
+staticfiles
+/static/
+/media/
+fabfile.pyc
+.vscode
+.env
+/CACHE/
+/logs/

@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+  shop_service:
+    build: ./shop_service
+    container_name: shop-service-web
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./shop_service/:/app/
+    ports:
+      - 8000:8000
+    depends_on:
+      - db_postgres
+
+
+  db_postgres:
+    image: postgres:15.4-alpine
+    container_name: shop-service-db
+    env_file: ./shop_service/app/.env
+    restart: always
+    volumes:
+      - db_postgres:/var/lib/postgresql/data
+
+
+volumes:
+  db_postgres:

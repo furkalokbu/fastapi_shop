@@ -1,0 +1,6 @@
+fastapi==0.100
+pydantic==2.3.0
+uvicorn==0.16.0
+python-environ==0.4.54
+SQLAlchemy==2.0.20
+psycopg2-binary==2.9.9
