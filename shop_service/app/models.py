@@ -8,12 +8,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    parent_id = Column(Integer, ForeignKey("categories.id"))
-
-    # __table_args__ = (
-    #     CheckConstraint("parent_id IS NULL OR (SELECT level FROM categories WHERE id = parent_id) < 10"),
-    # )
-    
+    parent_id = Column(Integer, ForeignKey("categories.id"))   
     children = relationship("Category")
 
 
