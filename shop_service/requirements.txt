@@ -5,3 +5,4 @@ python-environ==0.4.54
 SQLAlchemy==2.0.20
 psycopg2-binary==2.9.9
 python-multipart==0.0.6
+Faker==20.0.3

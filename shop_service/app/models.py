@@ -9,7 +9,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     parent_id = Column(Integer, ForeignKey("categories.id"))   
-    children = relationship("Category")
+    children = relationship("Category", remote_side=[id])
 
 
 class Item(Base):
