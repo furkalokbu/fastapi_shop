@@ -1,6 +1,7 @@
 from typing import List, Annotated, Optional, Set, Dict
 from pydantic import BaseModel
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy.sql import func, cast, select, text
 from sqlalchemy.future import select
@@ -30,8 +31,11 @@ class CategoryResponse(BaseModel):
     name: str
     children: Optional[List[int]] = []
 
-    class Config:
-        orm_mode = True
+
+class ItemResponse(BaseModel):
+    id: int
+    name: str
+    price: int
 
 
 @router.get("/categories-for-items/", response_model=list[CategoryResponse])
@@ -67,3 +71,20 @@ async def get_categories_for_items_api(db: db_dependency,
     ]
 
     return categories_response
+
+
+@router.get("/items-in-category/{category_id}", response_model=List[ItemResponse])
+async def get_items_in_category(category_id: int, db=Depends(get_db)):
+
+    items = {}
+    stmt = (
+        select(models.Item)
+        .join(models.ItemCategory, models.Item.id == models.ItemCategory.item_id)
+        .join(models.Category, models.ItemCategory.category_id == models.Category.id)
+        .where(models.Category.id == category_id)
+    )
+
+    result = db.execute(stmt)
+    items = result.scalars().all()
+
+    return items
