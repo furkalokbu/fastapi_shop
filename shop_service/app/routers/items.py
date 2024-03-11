@@ -8,6 +8,8 @@ from app.models import Base
 from app.database import SessionLocal
 import app.models as models
 
+from osgeo import gdal
+
 router = APIRouter(
     prefix='/items',
     tags=['items'],
@@ -35,6 +37,7 @@ class ItemCreate(BaseModel):
     price: int
 
 class ItemUpdate(BaseModel):
+    """"""
     name: str = None
     price: int = None
     category_ids: List[int]
@@ -42,6 +45,18 @@ class ItemUpdate(BaseModel):
 
 @router.get("/", response_model=List[Item])
 def get_all_items(db: db_dependency, skip: int = 0, limit: int = 10):
+    
+    ds = gdal.Open('app/AST_L1T.tif')
+    if ds is None:
+        raise ValueError("Failed to open raster dataset.")
+
+    # Get the specified band
+    band = ds.GetRasterBand(1)
+    if band is None:
+        raise ValueError(f"Failed to get band {1}.")
+
+    # Read the band array
+    band_array = band.ReadAsArray()
     items = db.query(models.Item).offset(skip).limit(limit).all()
     return items
 
